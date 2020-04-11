@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/spf13/viper"
@@ -24,6 +25,21 @@ func main() {
 	}
 	authUsername := viper.GetString("authUsername")
 	authPassword := viper.GetString("authPassword")
+
+	// set up the Twitter client
+	twitterCredentials := Credentials{
+		ConsumerKey:       viper.GetString("apiKey"),
+		ConsumerSecret:    viper.GetString("apiSecretKey"),
+		AccessToken:       viper.GetString("accessToken"),
+		AccessTokenSecret: viper.GetString("accessTokenSecret"),
+	}
+	client, err := GetClient(&twitterCredentials)
+	if err != nil {
+		log.Println("Error getting Twitter Client")
+		log.Println(err)
+	}
+	// Print out the pointer to our client for now so it doesn't throw errors
+	fmt.Printf("%+v\n", client)
 
 	url := "https://api.ravelry.com/projects/wool-rat/list.json"
 
