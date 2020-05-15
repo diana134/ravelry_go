@@ -4,11 +4,8 @@
 package main
 
 import (
-	"encoding/base64"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
 
 	"github.com/spf13/viper"
 )
@@ -23,35 +20,35 @@ func main() {
 	if err != nil {             // Handle errors reading the config file
 		panic(fmt.Errorf("fatal error config file %s", err))
 	}
-	authUsername := viper.GetString("authUsername")
-	authPassword := viper.GetString("authPassword")
+
+	// set up the Ravelry client
+	ravelryCredentials := RavelryCredentials{
+		AuthUsername: viper.GetString("authUsername"),
+		AuthPassword: viper.GetString("authPassword"),
+	}
+	ravelryClient := GetRavelryClient(&ravelryCredentials)
 
 	// set up the Twitter client
-	twitterCredentials := Credentials{
-		ConsumerKey:       viper.GetString("apiKey"),
-		ConsumerSecret:    viper.GetString("apiSecretKey"),
-		AccessToken:       viper.GetString("accessToken"),
-		AccessTokenSecret: viper.GetString("accessTokenSecret"),
-	}
-	client, err := GetClient(&twitterCredentials)
-	if err != nil {
-		log.Println("Error getting Twitter Client")
-		log.Println(err)
-	}
-	// Print out the pointer to our client for now so it doesn't throw errors
-	fmt.Printf("%+v\n", client)
+	// twitterCredentials := Credentials{
+	// 	ConsumerKey:       viper.GetString("apiKey"),
+	// 	ConsumerSecret:    viper.GetString("apiSecretKey"),
+	// 	AccessToken:       viper.GetString("accessToken"),
+	// 	AccessTokenSecret: viper.GetString("accessTokenSecret"),
+	// }
+	// twitterClient, err := GetClient(&twitterCredentials)
+	// if err != nil {
+	// 	log.Println("Error getting Twitter Client")
+	// 	log.Println(err)
+	// }
 
-	url := "https://api.ravelry.com/projects/wool-rat/list.json"
+	// make Ravelry request
+	patternData, _ := ravelryClient.PatternSearch()
+	log.Printf("%+v\n", patternData)
 
-	req, _ := http.NewRequest("GET", url, nil)
-
-	authString := authUsername + ":" + authPassword
-	req.Header.Add("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(authString)))
-
-	res, _ := http.DefaultClient.Do(req)
-
-	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
-
-	fmt.Println(string(body))
+	// tweet, resp, err := twitterClient.Statuses.Update("Hello World!", nil)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
+	// log.Printf("%+v\n", resp)
+	// log.Printf("%+v\n", tweet)
 }
