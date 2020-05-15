@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 )
@@ -28,17 +29,34 @@ func GetRavelryClient(creds *RavelryCredentials) (client *Client) {
 }
 
 // PatternSearch returns the top Hot Right Now pattern (for now) TODO
-func (c *Client) PatternSearch() (string, error) {
-	data, _ := c.doRequest("https://api.ravelry.com/patterns/search.json")
+func (c *Client) PatternSearch() (interface{}, error) {
+	paramerters := "?page_size=1&availability=free&sort=recently-popular"
+	data, _ := c.doRequest("https://api.ravelry.com/patterns/search.json" + paramerters)
 
-	return data, nil
+	// fmt.Println(string(data))
+
+	var result map[string]interface{}
+	json.Unmarshal(data, &result)
+	patterns := result["patterns"].([]interface{})
+
+	// fmt.Println(patterns)
+
+	return patterns[0], nil
 }
 
-func (c *Client) doRequest(url string) (string, error) {
+type Pattern struct {
+	name string
+}
+
+type PatternList struct {
+	patterns []string
+}
+
+func (c *Client) doRequest(url string) ([]byte, error) {
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", c.authHeader)
 	res, _ := http.DefaultClient.Do(req)
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
-	return string(body), nil
+	return body, nil
 }
