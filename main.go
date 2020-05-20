@@ -5,7 +5,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/spf13/viper"
 )
@@ -43,7 +42,7 @@ func main() {
 
 	// make Ravelry request
 	patternData, _ := ravelryClient.PatternSearch()
-	log.Printf("%+v\n", patternData)
+	fmt.Println("the hottest pattern right now is", patternData["name"])
 
 	// tweet, resp, err := twitterClient.Statuses.Update("Hello World!", nil)
 	// if err != nil {
