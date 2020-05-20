@@ -28,7 +28,7 @@ func GetRavelryClient(creds *RavelryCredentials) (client *Client) {
 	}
 }
 
-// PatternSearch returns the top Hot Right Now pattern (for now) TODO
+// PatternSearch returns the top free Hot Right Now pattern (for now) TODO
 func (c *Client) PatternSearch() (map[string]interface{}, error) {
 	paramerters := "?page_size=1&availability=free&sort=recently-popular"
 	data, _ := c.doRequest("https://api.ravelry.com/patterns/search.json" + paramerters)

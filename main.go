@@ -5,49 +5,72 @@ package main
 
 import (
 	"fmt"
+	"log"
 
+	"github.com/dghubble/go-twitter/twitter"
 	"github.com/spf13/viper"
 )
 
 func main() {
-	// read the config file
+	err := readConfigFile()
+	if err != nil { // Handle errors reading the config file
+		panic(fmt.Errorf("fatal error config file %s", err))
+	}
+
+	ravelryClient := setUpRavelryClient()
+
+	// twitterClient, err := setUpTwitterClient()
+	if err != nil {
+		panic(fmt.Errorf("Error getting Twitter Client %s", err))
+	}
+
+	// make Ravelry request
+	patternData, err := ravelryClient.PatternSearch()
+	if err != nil {
+		panic(fmt.Errorf("Error making Ravelry request %s", err))
+	}
+	fmt.Println("the hottest free pattern right now is", patternData["name"], ": ", patternData["permalink"])
+
+	// sendTweet(twitterClient, text)
+}
+
+func readConfigFile() error {
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
 	viper.AddConfigPath(".")
 
 	err := viper.ReadInConfig() // Find and read the config file
-	if err != nil {             // Handle errors reading the config file
-		panic(fmt.Errorf("fatal error config file %s", err))
-	}
 
-	// set up the Ravelry client
+	return err
+}
+
+func setUpRavelryClient() *Client {
 	ravelryCredentials := RavelryCredentials{
 		AuthUsername: viper.GetString("authUsername"),
 		AuthPassword: viper.GetString("authPassword"),
 	}
 	ravelryClient := GetRavelryClient(&ravelryCredentials)
 
-	// set up the Twitter client
-	// twitterCredentials := Credentials{
-	// 	ConsumerKey:       viper.GetString("apiKey"),
-	// 	ConsumerSecret:    viper.GetString("apiSecretKey"),
-	// 	AccessToken:       viper.GetString("accessToken"),
-	// 	AccessTokenSecret: viper.GetString("accessTokenSecret"),
-	// }
-	// twitterClient, err := GetClient(&twitterCredentials)
-	// if err != nil {
-	// 	log.Println("Error getting Twitter Client")
-	// 	log.Println(err)
-	// }
+	return ravelryClient
+}
 
-	// make Ravelry request
-	patternData, _ := ravelryClient.PatternSearch()
-	fmt.Println("the hottest pattern right now is", patternData["name"])
+func setUpTwitterClient() (*twitter.Client, error) {
+	twitterCredentials := Credentials{
+		ConsumerKey:       viper.GetString("apiKey"),
+		ConsumerSecret:    viper.GetString("apiSecretKey"),
+		AccessToken:       viper.GetString("accessToken"),
+		AccessTokenSecret: viper.GetString("accessTokenSecret"),
+	}
+	twitterClient, err := GetClient(&twitterCredentials)
 
-	// tweet, resp, err := twitterClient.Statuses.Update("Hello World!", nil)
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-	// log.Printf("%+v\n", resp)
-	// log.Printf("%+v\n", tweet)
+	return twitterClient, err
+}
+
+func sendTweet(client *twitter.Client, text string) {
+	tweet, resp, err := client.Statuses.Update(text, nil)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Printf("%+v\n", resp)
+	log.Printf("%+v\n", tweet)
 }
