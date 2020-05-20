@@ -6,6 +6,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
+	"time"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/spf13/viper"
@@ -19,19 +21,25 @@ func main() {
 
 	ravelryClient := setUpRavelryClient()
 
-	// twitterClient, err := setUpTwitterClient()
+	twitterClient, err := setUpTwitterClient()
 	if err != nil {
 		panic(fmt.Errorf("Error getting Twitter Client %s", err))
 	}
 
+	// choose what query to run
+	availabilityType, sortType := chooseQuery()
+
 	// make Ravelry request
-	patternData, err := ravelryClient.PatternSearch()
+	patternData, err := ravelryClient.PatternSearch(availabilityType, sortType)
 	if err != nil {
 		panic(fmt.Errorf("Error making Ravelry request %s", err))
 	}
-	fmt.Println("the hottest free pattern right now is", patternData["name"], ": ", patternData["permalink"])
 
-	// sendTweet(twitterClient, text)
+	// generate the text for the tweet
+	text := "The " + sortType.tweetText + " " + availabilityType.tweetText + " pattern right now is " + patternData["name"].(string) + ": " + "ravelry.com/patterns/library/" + patternData["permalink"].(string)
+	fmt.Println(text)
+
+	sendTweet(twitterClient, text)
 }
 
 func readConfigFile() error {
@@ -64,6 +72,18 @@ func setUpTwitterClient() (*twitter.Client, error) {
 	twitterClient, err := GetClient(&twitterCredentials)
 
 	return twitterClient, err
+}
+
+func chooseQuery() (availabilityType Parameter, sortType Parameter) {
+	rand.Seed(time.Now().Unix()) // initialize global pseudo random generator
+
+	randomIndex := rand.Intn(len(AvailabilityTypes))
+	availabilityType = AvailabilityTypes[randomIndex]
+
+	randomIndex = rand.Intn(len(SortTypes))
+	sortType = SortTypes[randomIndex]
+
+	return availabilityType, sortType
 }
 
 func sendTweet(client *twitter.Client, text string) {

@@ -22,4 +22,31 @@ func TestGetClient(t *testing.T) {
 			t.Errorf("got %q want %q", got, wantAuthHeader)
 		}
 	})
+
+}
+
+func TestBuildParameterString(t *testing.T) {
+
+	t.Run("construct a parameter string from the given availability type and sort type", func(t *testing.T) {
+		availabilityType := Parameter{
+			urlKey:    "availability",
+			urlValue:  "free",
+			tweetText: "free",
+		}
+
+		sortType := Parameter{
+			urlKey:    "sort",
+			urlValue:  "recently-popular",
+			tweetText: "hottest",
+		}
+
+		got := BuildParameterString(availabilityType, sortType)
+
+		want := "?page_size=1&availability=free&sort=recently-popular"
+
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
+	})
+
 }
