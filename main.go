@@ -13,6 +13,9 @@ import (
 	"github.com/spf13/viper"
 )
 
+// DEBUG: if true, the loop will only run once and no tweets will be sent
+const DEBUG = true
+
 func main() {
 	err := readConfigFile()
 	if err != nil { // Handle errors reading the config file
@@ -27,7 +30,6 @@ func main() {
 	}
 
 	// the part that loops
-
 	for {
 
 		// choose what query to run
@@ -40,13 +42,19 @@ func main() {
 		}
 
 		// generate the text for the tweet
-		text := "The " + sortType.tweetText + " " + availabilityType.tweetText + " pattern right now is " + patternData["name"].(string) + ": " + "ravelry.com/patterns/library/" + patternData["permalink"].(string)
+		text := generateTweetText(sortType, availabilityType, patternData)
 		fmt.Println(text)
 
-		sendTweet(twitterClient, text)
+		if !DEBUG {
+			// send the tweet!
+			sendTweet(twitterClient, text)
 
-		// wait for an hour
-		time.Sleep(time.Hour)
+			// wait for an hour
+			time.Sleep(time.Hour)
+		} else {
+			break
+		}
+
 	}
 }
 
@@ -92,6 +100,11 @@ func chooseQuery() (availabilityType Parameter, sortType Parameter) {
 	sortType = SortTypes[randomIndex]
 
 	return availabilityType, sortType
+}
+
+func generateTweetText(sortType Parameter, availabilityType Parameter, patternData map[string]interface{}) string {
+	text := "The " + sortType.tweetText + " " + availabilityType.tweetText + " pattern right now is " + patternData["name"].(string) + ": " + PatternBaseURL + patternData["permalink"].(string)
+	return text
 }
 
 func sendTweet(client *twitter.Client, text string) {

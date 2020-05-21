@@ -94,6 +94,8 @@ var AvailabilityTypes = [4]Parameter{
 	},
 }
 
+const PatternBaseURL = "ravelry.com/patterns/library/"
+
 // GetRavelryClient returns a Ravelry client
 func GetRavelryClient(creds *RavelryCredentials) (client *Client) {
 	authString := creds.AuthUsername + ":" + creds.AuthPassword
