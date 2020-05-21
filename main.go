@@ -26,20 +26,28 @@ func main() {
 		panic(fmt.Errorf("Error getting Twitter Client %s", err))
 	}
 
-	// choose what query to run
-	availabilityType, sortType := chooseQuery()
+	// the part that loops
 
-	// make Ravelry request
-	patternData, err := ravelryClient.PatternSearch(availabilityType, sortType)
-	if err != nil {
-		panic(fmt.Errorf("Error making Ravelry request %s", err))
+	for {
+
+		// choose what query to run
+		availabilityType, sortType := chooseQuery()
+
+		// make Ravelry request
+		patternData, err := ravelryClient.PatternSearch(availabilityType, sortType)
+		if err != nil {
+			fmt.Errorf("Error making Ravelry request %s", err)
+		}
+
+		// generate the text for the tweet
+		text := "The " + sortType.tweetText + " " + availabilityType.tweetText + " pattern right now is " + patternData["name"].(string) + ": " + "ravelry.com/patterns/library/" + patternData["permalink"].(string)
+		fmt.Println(text)
+
+		sendTweet(twitterClient, text)
+
+		// wait for an hour
+		time.Sleep(time.Hour)
 	}
-
-	// generate the text for the tweet
-	text := "The " + sortType.tweetText + " " + availabilityType.tweetText + " pattern right now is " + patternData["name"].(string) + ": " + "ravelry.com/patterns/library/" + patternData["permalink"].(string)
-	fmt.Println(text)
-
-	sendTweet(twitterClient, text)
 }
 
 func readConfigFile() error {
