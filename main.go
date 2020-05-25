@@ -33,16 +33,16 @@ func main() {
 	for {
 
 		// choose what query to run
-		availabilityType, sortType := chooseQuery()
+		sortType, availabilityType, craftType := chooseQuery()
 
 		// make Ravelry request
-		patternData, err := ravelryClient.PatternSearch(availabilityType, sortType)
+		patternData, err := ravelryClient.PatternSearch(sortType, availabilityType, craftType)
 		if err != nil {
-			fmt.Errorf("Error making Ravelry request %s", err)
+			_ = fmt.Errorf("Error making Ravelry request %s", err)
 		}
 
 		// generate the text for the tweet
-		text := generateTweetText(sortType, availabilityType, patternData)
+		text := generateTweetText(sortType, availabilityType, craftType, patternData)
 		fmt.Println(text)
 
 		if !DEBUG {
@@ -90,20 +90,23 @@ func setUpTwitterClient() (*twitter.Client, error) {
 	return twitterClient, err
 }
 
-func chooseQuery() (availabilityType Parameter, sortType Parameter) {
+func chooseQuery() (sortType Parameter, availabilityType Parameter, craftType Parameter) {
 	rand.Seed(time.Now().Unix()) // initialize global pseudo random generator
 
-	randomIndex := rand.Intn(len(AvailabilityTypes))
-	availabilityType = AvailabilityTypes[randomIndex]
-
-	randomIndex = rand.Intn(len(SortTypes))
+	randomIndex := rand.Intn(len(SortTypes))
 	sortType = SortTypes[randomIndex]
 
-	return availabilityType, sortType
+	randomIndex = rand.Intn(len(AvailabilityTypes))
+	availabilityType = AvailabilityTypes[randomIndex]
+
+	randomIndex = rand.Intn(len(CraftTypes))
+	craftType = CraftTypes[randomIndex]
+
+	return sortType, availabilityType, craftType
 }
 
-func generateTweetText(sortType Parameter, availabilityType Parameter, patternData map[string]interface{}) string {
-	text := "The " + sortType.tweetText + " " + availabilityType.tweetText + " pattern right now is " + patternData["name"].(string) + ": " + PatternBaseURL + patternData["permalink"].(string)
+func generateTweetText(sortType Parameter, availabilityType Parameter, craftType Parameter, patternData map[string]interface{}) string {
+	text := fmt.Sprintf("The %s %s %s pattern right now is %s: %s", sortType.tweetText, availabilityType.tweetText, craftType.tweetText, patternData["name"].(string), PatternBaseURL+patternData["permalink"].(string))
 	return text
 }
 

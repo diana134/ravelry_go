@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -124,6 +125,30 @@ var AvailabilityTypes = [3]Parameter{
 	},
 }
 
+// CraftTypes contains the different craft types available for queries
+var CraftTypes = [4]Parameter{
+	Parameter{
+		urlKey:    "craft",
+		urlValue:  "crochet",
+		tweetText: "crochet",
+	},
+	Parameter{
+		urlKey:    "craft",
+		urlValue:  "knitting",
+		tweetText: "knitting",
+	},
+	Parameter{
+		urlKey:    "craft",
+		urlValue:  "machine-knitting",
+		tweetText: "machine knitting",
+	},
+	Parameter{
+		urlKey:    "craft",
+		urlValue:  "loom-knitting",
+		tweetText: "loom knitting",
+	},
+}
+
 // PatternBaseURL is the url that takes a suffix of query parameters
 const PatternBaseURL = "ravelry.com/patterns/library/"
 
@@ -138,15 +163,16 @@ func GetRavelryClient(creds *RavelryCredentials) (client *Client) {
 }
 
 // BuildParameterString builds the parameter string for the query
-func BuildParameterString(availabilityType Parameter, sortType Parameter) string {
-	parameterString := "?page_size=1"
-	parameterString += "&" + availabilityType.urlKey + "=" + availabilityType.urlValue + "&" + sortType.urlKey + "=" + sortType.urlValue
+func BuildParameterString(sortType Parameter, availabilityType Parameter, craftType Parameter) string {
+	// parameterString := "?page_size=1"
+	// parameterString += "&" + sortType.urlValue + availabilityType.urlKey + "=" + availabilityType.urlValue + "&" + sortType.urlKey + "=" + sortType.urlValue
+	parameterString := fmt.Sprintf("?page_size=1&%s=%s&%s=%s&%s=%s", sortType.urlKey, sortType.urlValue, availabilityType.urlKey, availabilityType.urlValue, craftType.urlKey, craftType.urlValue)
 	return parameterString
 }
 
-// PatternSearch returns the top free Hot Right Now pattern (for now) TODO
-func (c *Client) PatternSearch(availabilityType Parameter, sortType Parameter) (map[string]interface{}, error) {
-	parameters := BuildParameterString(availabilityType, sortType)
+// PatternSearch returns the results of the query
+func (c *Client) PatternSearch(sortType, availabilityType Parameter, craftType Parameter) (map[string]interface{}, error) {
+	parameters := BuildParameterString(sortType, availabilityType, craftType)
 	data, err := c.doRequest("https://api.ravelry.com/patterns/search.json" + parameters)
 	if err != nil {
 		return nil, err
