@@ -27,7 +27,7 @@ type Parameter struct {
 }
 
 // SortTypes contains all the different types of sort for queries
-var SortTypes = [8]Parameter{
+var SortTypes = [15]Parameter{
 	Parameter{
 		urlKey:    "sort",
 		urlValue:  "recently-popular",
@@ -40,8 +40,18 @@ var SortTypes = [8]Parameter{
 	},
 	Parameter{
 		urlKey:    "sort",
+		urlValue:  "created_",
+		tweetText: "oldest",
+	},
+	Parameter{
+		urlKey:    "sort",
 		urlValue:  "popularity",
 		tweetText: "most popular",
+	},
+	Parameter{
+		urlKey:    "sort",
+		urlValue:  "popularity_",
+		tweetText: "least popular",
 	},
 	Parameter{
 		urlKey:    "sort",
@@ -50,8 +60,18 @@ var SortTypes = [8]Parameter{
 	},
 	Parameter{
 		urlKey:    "sort",
+		urlValue:  "projects_",
+		tweetText: "least made",
+	},
+	Parameter{
+		urlKey:    "sort",
 		urlValue:  "favorites",
 		tweetText: "most favorited",
+	},
+	Parameter{
+		urlKey:    "sort",
+		urlValue:  "favorites_",
+		tweetText: "least favorited",
 	},
 	Parameter{
 		urlKey:    "sort",
@@ -60,23 +80,33 @@ var SortTypes = [8]Parameter{
 	},
 	Parameter{
 		urlKey:    "sort",
+		urlValue:  "queues_",
+		tweetText: "least queued",
+	},
+	Parameter{
+		urlKey:    "sort",
 		urlValue:  "date",
 		tweetText: "most recently published",
+	},
+	Parameter{
+		urlKey:    "sort",
+		urlValue:  "date_",
+		tweetText: "oldest published",
 	},
 	Parameter{
 		urlKey:    "sort",
 		urlValue:  "rating",
 		tweetText: "highest rated",
 	},
+	Parameter{
+		urlKey:    "sort",
+		urlValue:  "rating_",
+		tweetText: "lowest rated",
+	},
 }
 
 // AvailabilityTypes contains the different types of availability for queries
-var AvailabilityTypes = [4]Parameter{
-	Parameter{
-		urlKey:    "availability",
-		urlValue:  "",
-		tweetText: "",
-	},
+var AvailabilityTypes = [3]Parameter{
 	Parameter{
 		urlKey:    "availability",
 		urlValue:  "free",
@@ -94,6 +124,7 @@ var AvailabilityTypes = [4]Parameter{
 	},
 }
 
+// PatternBaseURL is the url that takes a suffix of query parameters
 const PatternBaseURL = "ravelry.com/patterns/library/"
 
 // GetRavelryClient returns a Ravelry client
