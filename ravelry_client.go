@@ -28,7 +28,7 @@ type Parameter struct {
 }
 
 // SortTypes contains all the different types of sort for queries
-var SortTypes = [15]Parameter{
+var SortTypes = [10]Parameter{
 	Parameter{
 		urlKey:    "sort",
 		urlValue:  "recently-popular",
@@ -49,41 +49,41 @@ var SortTypes = [15]Parameter{
 		urlValue:  "popularity",
 		tweetText: "most popular",
 	},
-	Parameter{
-		urlKey:    "sort",
-		urlValue:  "popularity_",
-		tweetText: "least popular",
-	},
+	// Parameter{
+	// 	urlKey:    "sort",
+	// 	urlValue:  "popularity_",
+	// 	tweetText: "least popular",
+	// },
 	Parameter{
 		urlKey:    "sort",
 		urlValue:  "projects",
 		tweetText: "most made",
 	},
-	Parameter{
-		urlKey:    "sort",
-		urlValue:  "projects_",
-		tweetText: "least made",
-	},
+	// Parameter{
+	// 	urlKey:    "sort",
+	// 	urlValue:  "projects_",
+	// 	tweetText: "least made",
+	// },
 	Parameter{
 		urlKey:    "sort",
 		urlValue:  "favorites",
 		tweetText: "most favorited",
 	},
-	Parameter{
-		urlKey:    "sort",
-		urlValue:  "favorites_",
-		tweetText: "least favorited",
-	},
+	// Parameter{
+	// 	urlKey:    "sort",
+	// 	urlValue:  "favorites_",
+	// 	tweetText: "least favorited",
+	// },
 	Parameter{
 		urlKey:    "sort",
 		urlValue:  "queues",
 		tweetText: "most queued",
 	},
-	Parameter{
-		urlKey:    "sort",
-		urlValue:  "queues_",
-		tweetText: "least queued",
-	},
+	// Parameter{
+	// 	urlKey:    "sort",
+	// 	urlValue:  "queues_",
+	// 	tweetText: "least queued",
+	// },
 	Parameter{
 		urlKey:    "sort",
 		urlValue:  "date",
@@ -99,15 +99,15 @@ var SortTypes = [15]Parameter{
 		urlValue:  "rating",
 		tweetText: "highest rated",
 	},
-	Parameter{
-		urlKey:    "sort",
-		urlValue:  "rating_",
-		tweetText: "lowest rated",
-	},
+	// Parameter{
+	// 	urlKey:    "sort",
+	// 	urlValue:  "rating_",
+	// 	tweetText: "lowest rated",
+	// },
 }
 
 // AvailabilityTypes contains the different types of availability for queries
-var AvailabilityTypes = [3]Parameter{
+var AvailabilityTypes = [2]Parameter{
 	Parameter{
 		urlKey:    "availability",
 		urlValue:  "free",
@@ -115,14 +115,14 @@ var AvailabilityTypes = [3]Parameter{
 	},
 	Parameter{
 		urlKey:    "availability",
-		urlValue:  "-free",
+		urlValue:  "online",
 		tweetText: "paid",
 	},
-	Parameter{
-		urlKey:    "availability",
-		urlValue:  "discontinued",
-		tweetText: "discontinued",
-	},
+	// Parameter{
+	// 	urlKey:    "availability",
+	// 	urlValue:  "discontinued",
+	// 	tweetText: "discontinued",
+	// },
 }
 
 // CraftTypes contains the different craft types available for queries
@@ -164,9 +164,7 @@ func GetRavelryClient(creds *RavelryCredentials) (client *Client) {
 
 // BuildParameterString builds the parameter string for the query
 func BuildParameterString(sortType Parameter, availabilityType Parameter, craftType Parameter) string {
-	// parameterString := "?page_size=1"
-	// parameterString += "&" + sortType.urlValue + availabilityType.urlKey + "=" + availabilityType.urlValue + "&" + sortType.urlKey + "=" + sortType.urlValue
-	parameterString := fmt.Sprintf("?page_size=1&%s=%s&%s=%s&%s=%s", sortType.urlKey, sortType.urlValue, availabilityType.urlKey, availabilityType.urlValue, craftType.urlKey, craftType.urlValue)
+	parameterString := fmt.Sprintf("?page_size=1&photo=yes&%s=%s&%s=%s&%s=%s", sortType.urlKey, sortType.urlValue, availabilityType.urlKey, availabilityType.urlValue, craftType.urlKey, craftType.urlValue)
 	return parameterString
 }
 
