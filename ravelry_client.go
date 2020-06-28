@@ -28,7 +28,7 @@ type Parameter struct {
 }
 
 // SortTypes contains all the different types of sort for queries
-var SortTypes = [10]Parameter{
+var SortTypes = [8]Parameter{
 	Parameter{
 		urlKey:    "sort",
 		urlValue:  "recently-popular",
@@ -39,11 +39,11 @@ var SortTypes = [10]Parameter{
 		urlValue:  "created",
 		tweetText: "newest",
 	},
-	Parameter{
-		urlKey:    "sort",
-		urlValue:  "created_",
-		tweetText: "oldest",
-	},
+	// Parameter{
+	// 	urlKey:    "sort",
+	// 	urlValue:  "created_",
+	// 	tweetText: "oldest",
+	// },
 	Parameter{
 		urlKey:    "sort",
 		urlValue:  "popularity",
@@ -89,11 +89,11 @@ var SortTypes = [10]Parameter{
 		urlValue:  "date",
 		tweetText: "most recently published",
 	},
-	Parameter{
-		urlKey:    "sort",
-		urlValue:  "date_",
-		tweetText: "oldest published",
-	},
+	// Parameter{
+	// 	urlKey:    "sort",
+	// 	urlValue:  "date_",
+	// 	tweetText: "oldest published",
+	// },
 	Parameter{
 		urlKey:    "sort",
 		urlValue:  "rating",
