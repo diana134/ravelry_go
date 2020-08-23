@@ -149,6 +149,100 @@ var CraftTypes = [4]Parameter{
 	},
 }
 
+// Languages contains the languages available for queries
+var Languages = [18]Parameter{
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "en",
+		tweetText: "English",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "da",
+		tweetText: "Danish",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "nl",
+		tweetText: "Dutch",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "cs",
+		tweetText: "Czech",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "et",
+		tweetText: "Estonian",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "fi",
+		tweetText: "Finnish",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "fr",
+		tweetText: "French",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "de",
+		tweetText: "German",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "hu",
+		tweetText: "Hungarian",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "is",
+		tweetText: "Icelandic",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "it",
+		tweetText: "Italian",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "ja",
+		tweetText: "Japanese",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "no",
+		tweetText: "Norwegian",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "pl",
+		tweetText: "Polish",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "pt",
+		tweetText: "Portuguese",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "ru",
+		tweetText: "Russian",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "es",
+		tweetText: "Spanish",
+	},
+	Parameter{
+		urlKey:    "language",
+		urlValue:  "sv",
+		tweetText: "Swedish",
+	},
+}
+
 // PatternBaseURL is the url that takes a suffix of query parameters
 const PatternBaseURL = "ravelry.com/patterns/library/"
 
@@ -163,14 +257,14 @@ func GetRavelryClient(creds *RavelryCredentials) (client *Client) {
 }
 
 // BuildParameterString builds the parameter string for the query
-func BuildParameterString(sortType Parameter, availabilityType Parameter, craftType Parameter) string {
-	parameterString := fmt.Sprintf("?page_size=1&photo=yes&%s=%s&%s=%s&%s=%s", sortType.urlKey, sortType.urlValue, availabilityType.urlKey, availabilityType.urlValue, craftType.urlKey, craftType.urlValue)
+func BuildParameterString(sortType Parameter, availabilityType Parameter, craftType Parameter, language Parameter) string {
+	parameterString := fmt.Sprintf("?page_size=1&photo=yes&%s=%s&%s=%s&%s=%s&%s=%s", sortType.urlKey, sortType.urlValue, availabilityType.urlKey, availabilityType.urlValue, craftType.urlKey, craftType.urlValue, language.urlKey, language.urlValue)
 	return parameterString
 }
 
 // PatternSearch returns the results of the query
-func (c *Client) PatternSearch(sortType, availabilityType Parameter, craftType Parameter) (map[string]interface{}, error) {
-	parameters := BuildParameterString(sortType, availabilityType, craftType)
+func (c *Client) PatternSearch(sortType, availabilityType Parameter, craftType Parameter, language Parameter) (map[string]interface{}, error) {
+	parameters := BuildParameterString(sortType, availabilityType, craftType, language)
 	data, err := c.doRequest("https://api.ravelry.com/patterns/search.json" + parameters)
 	if err != nil {
 		return nil, err

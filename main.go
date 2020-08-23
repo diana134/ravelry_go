@@ -33,16 +33,16 @@ func main() {
 	for {
 
 		// choose what query to run
-		sortType, availabilityType, craftType := chooseQuery()
+		sortType, availabilityType, craftType, language := chooseQuery()
 
 		// make Ravelry request
-		patternData, err := ravelryClient.PatternSearch(sortType, availabilityType, craftType)
+		patternData, err := ravelryClient.PatternSearch(sortType, availabilityType, craftType, language)
 		if err != nil {
 			_ = fmt.Errorf("Error making Ravelry request %s", err)
 		}
 
 		// generate the text for the tweet
-		text := generateTweetText(sortType, availabilityType, craftType, patternData)
+		text := generateTweetText(sortType, availabilityType, craftType, language, patternData)
 		fmt.Println(text)
 
 		if !DEBUG {
@@ -90,7 +90,7 @@ func setUpTwitterClient() (*twitter.Client, error) {
 	return twitterClient, err
 }
 
-func chooseQuery() (sortType Parameter, availabilityType Parameter, craftType Parameter) {
+func chooseQuery() (sortType Parameter, availabilityType Parameter, craftType Parameter, language Parameter) {
 	rand.Seed(time.Now().Unix()) // initialize global pseudo random generator
 
 	randomIndex := rand.Intn(len(SortTypes))
@@ -102,11 +102,14 @@ func chooseQuery() (sortType Parameter, availabilityType Parameter, craftType Pa
 	randomIndex = rand.Intn(len(CraftTypes))
 	craftType = CraftTypes[randomIndex]
 
-	return sortType, availabilityType, craftType
+	randomIndex = rand.Intn(len(Languages))
+	language = Languages[randomIndex]
+
+	return sortType, availabilityType, craftType, language
 }
 
-func generateTweetText(sortType Parameter, availabilityType Parameter, craftType Parameter, patternData map[string]interface{}) string {
-	text := fmt.Sprintf("The %s %s %s pattern right now is %s: %s", sortType.tweetText, availabilityType.tweetText, craftType.tweetText, patternData["name"].(string), PatternBaseURL+patternData["permalink"].(string))
+func generateTweetText(sortType Parameter, availabilityType Parameter, craftType Parameter, language Parameter, patternData map[string]interface{}) string {
+	text := fmt.Sprintf("The %s %s %s pattern available in %s right now is %s: %s", sortType.tweetText, availabilityType.tweetText, craftType.tweetText, language.tweetText, patternData["name"].(string), PatternBaseURL+patternData["permalink"].(string))
 	return text
 }
 
