@@ -39,6 +39,7 @@ func main() {
 		patternData, err := ravelryClient.PatternSearch(sortType, availabilityType, craftType, language)
 		if err != nil {
 			_ = fmt.Errorf("Error making Ravelry request %s", err)
+			break
 		}
 
 		// generate the text for the tweet

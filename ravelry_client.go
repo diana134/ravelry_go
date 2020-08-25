@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -265,6 +266,7 @@ func BuildParameterString(sortType Parameter, availabilityType Parameter, craftT
 // PatternSearch returns the results of the query
 func (c *Client) PatternSearch(sortType, availabilityType Parameter, craftType Parameter, language Parameter) (map[string]interface{}, error) {
 	parameters := BuildParameterString(sortType, availabilityType, craftType, language)
+	fmt.Println(parameters)
 	data, err := c.doRequest("https://api.ravelry.com/patterns/search.json" + parameters)
 	if err != nil {
 		return nil, err
@@ -281,8 +283,10 @@ func (c *Client) PatternSearch(sortType, availabilityType Parameter, craftType P
 		return nil, err
 	}
 	patterns := result["patterns"].([]interface{})
+	if len(patterns) < 1 {
+		return nil, errors.New("no results")
+	}
 	patternsContents := patterns[0].(map[string]interface{})
-
 	return patternsContents, nil
 }
 
